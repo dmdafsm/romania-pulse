@@ -3,6 +3,7 @@ namespace RomaniaPulse.Web.Domain;
 public enum Frequency
 {
     Annual,
+    Semiannual,
     Quarterly,
     Monthly,
     Daily,

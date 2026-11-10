@@ -9,6 +9,8 @@ public sealed class EurostatSource(IHttpClientFactory clients) : IIndicatorSourc
 {
     public static readonly Uri BaseAddress = new("https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/");
 
+    public const string GeoDimension = "geo";
+
     public bool CanHandle(SourceQuery query) => query is EurostatQuery;
 
     public async Task<SourceResult> FetchAsync(IndicatorDefinition definition, CancellationToken cancellationToken)
@@ -30,13 +32,20 @@ public sealed class EurostatSource(IHttpClientFactory clients) : IIndicatorSourc
         var freq = frequency switch
         {
             Frequency.Annual => "A",
+            Frequency.Semiannual => "S",
             Frequency.Quarterly => "Q",
             Frequency.Monthly => "M",
             _ => "D",
         };
 
         var url = new StringBuilder(Uri.EscapeDataString(query.Dataset));
-        url.Append("?format=JSON&lang=EN&geo=RO&freq=").Append(freq);
+        url.Append("?format=JSON&lang=EN&freq=").Append(freq);
+        if (query.SeriesDimension != GeoDimension)
+        {
+            // Everything is about Romania unless the chart compares countries.
+            url.Append("&geo=RO");
+        }
+
         foreach (var (key, value) in query.Filters.OrderBy(f => f.Key, StringComparer.Ordinal))
         {
             Append(url, key, value);

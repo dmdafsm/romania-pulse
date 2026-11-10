@@ -19,7 +19,21 @@ public class EurostatSourceTests
 
         Assert.Equal(
             "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/ei_eteu27_2020_m"
-            + "?format=JSON&lang=EN&geo=RO&freq=M&partner=WORLD&unit=MIO-EUR-NSA&stk_flow=EXP&stk_flow=IMP",
+            + "?format=JSON&lang=EN&freq=M&geo=RO&partner=WORLD&unit=MIO-EUR-NSA&stk_flow=EXP&stk_flow=IMP",
             uri.AbsoluteUri);
+    }
+
+    [Fact]
+    public void BuildUri_CountryComparison_AsksForTheListedCountriesInsteadOfRomaniaOnly()
+    {
+        var query = new EurostatQuery(
+            "tec00114",
+            new Dictionary<string, string>(),
+            EurostatSource.GeoDimension,
+            [new("RO", "Romania"), new("BG", "Bulgaria")]);
+
+        var uri = EurostatSource.BuildUri(query, Frequency.Annual);
+
+        Assert.Equal("?format=JSON&lang=EN&freq=A&geo=RO&geo=BG", uri.Query);
     }
 }

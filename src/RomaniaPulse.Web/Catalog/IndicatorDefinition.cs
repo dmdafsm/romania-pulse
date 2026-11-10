@@ -28,7 +28,8 @@ public sealed record SeriesSpec(string Code, string Label);
 public abstract record SourceQuery;
 
 /// <summary>
-/// A Eurostat dissemination API query. <c>geo=RO</c> and <c>freq</c> are added automatically.
+/// A Eurostat dissemination API query. <c>freq</c> is added automatically, and so is <c>geo=RO</c>
+/// unless <see cref="SeriesDimension"/> is <c>geo</c> (a comparison across countries).
 /// Every dimension except time and <see cref="SeriesDimension"/> must be pinned to one value.
 /// </summary>
 public sealed record EurostatQuery(
@@ -69,6 +70,9 @@ public sealed record IndicatorDefinition
     public required ChartKind Chart { get; init; }
     public required SourceQuery Query { get; init; }
     public BreakdownOptions? Breakdown { get; init; }
+
+    /// <summary>Series key drawn in the accent colour in a breakdown (Romania among other countries).</summary>
+    public string? HighlightKey { get; init; }
 
     public DeltaKind Delta { get; init; } = DeltaKind.Points;
 

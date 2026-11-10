@@ -2,7 +2,7 @@ using System.Globalization;
 
 namespace RomaniaPulse.Web.Domain;
 
-/// <summary>Parses and prints statistical reference periods ("2026", "2026-Q3", "2026-10", "2026-10-31").</summary>
+/// <summary>Parses and prints statistical reference periods ("2026", "2026-S2", "2026-Q3", "2026-10", "2026-10-31").</summary>
 public static class Period
 {
     public static bool TryParse(string text, out DateOnly date)
@@ -25,6 +25,14 @@ public static class Period
             return true;
         }
 
+        if (text.Length == 7 && text[4] == '-' && text[5] == 'S'
+            && int.TryParse(text.AsSpan(0, 4), NumberStyles.None, inv, out year)
+            && text[6] is '1' or '2')
+        {
+            date = new DateOnly(year, text[6] == '1' ? 1 : 7, 1);
+            return true;
+        }
+
         if (text.Length == 7)
         {
             return DateOnly.TryParseExact(text, "yyyy-MM", inv, DateTimeStyles.None, out date);
@@ -36,6 +44,7 @@ public static class Period
     public static string Label(DateOnly date, Frequency frequency) => frequency switch
     {
         Frequency.Annual => date.Year.ToString(CultureInfo.InvariantCulture),
+        Frequency.Semiannual => string.Create(CultureInfo.InvariantCulture, $"H{(date.Month <= 6 ? 1 : 2)} {date.Year}"),
         Frequency.Quarterly => string.Create(CultureInfo.InvariantCulture, $"Q{((date.Month - 1) / 3) + 1} {date.Year}"),
         Frequency.Monthly => date.ToString("MMM yyyy", CultureInfo.InvariantCulture),
         _ => date.ToString("d MMM yyyy", CultureInfo.InvariantCulture),

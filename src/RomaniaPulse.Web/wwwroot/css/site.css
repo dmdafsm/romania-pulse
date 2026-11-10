@@ -7,6 +7,7 @@ body.light {
     --series-2: #eb6834;
     --series-3: #1baf7a;
     --series-4: #eda100;
+    --chart-muted: #b4b3ab;
     --chart-grid: #e4e3df;
     --chart-ink: #52514e;
 }
@@ -16,6 +17,7 @@ body.dark {
     --series-2: #d95926;
     --series-3: #199e70;
     --series-4: #c98500;
+    --chart-muted: #66655f;
     --chart-grid: #383835;
     --chart-ink: #c3c2b7;
 }
@@ -264,6 +266,7 @@ main.responsive {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
     gap: 16px;
+    align-items: start;
     margin-top: 24px;
 }
 
