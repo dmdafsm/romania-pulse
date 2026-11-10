@@ -1,0 +1,30 @@
+@page "/fragments/kpi/{id}"
+@model RomaniaPulse.Web.Pages.Fragments.KpiModel
+@{
+    Layout = null;
+    var d = Model.Definition;
+}
+<a class="kpi" href="/section/@d.Section#ind-@d.Id">
+    <span class="kpi-title">@d.Title</span>
+    @if (Model.Kpi is { } kpi)
+    {
+        <span class="kpi-value">@kpi.Value</span>
+        <span class="kpi-meta">@kpi.PeriodLabel@(kpi.Change is null ? "" : $" · {kpi.Change}")</span>
+        @if (kpi.SparklinePath.Length > 0)
+        {
+            <svg class="sparkline" viewBox="0 0 @IndicatorShaper.SparklineWidth @IndicatorShaper.SparklineHeight" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                <path d="@kpi.SparklinePath" />
+            </svg>
+        }
+        <span class="kpi-unit">@d.Unit</span>
+        @if (Model.IsStale)
+        {
+            <span class="stale">Source unavailable; showing last retrieved data</span>
+        }
+    }
+    else
+    {
+        <span class="kpi-value">–</span>
+        <span class="kpi-meta">Not available right now</span>
+    }
+</a>

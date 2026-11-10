@@ -1,0 +1,91 @@
+@page "/fragments/chart/{id}"
+@model RomaniaPulse.Web.Pages.Fragments.ChartModel
+@{
+    Layout = null;
+    var d = Model.Definition;
+    var self = $"/fragments/chart/{d.Id}";
+}
+<article id="ind-@d.Id" class="indicator">
+    <h2>@d.Title</h2>
+    <p class="unit">@d.Unit@(Model.PeriodLabel is null ? "" : $" · {Model.PeriodLabel}")</p>
+
+    @if (Model.Failed)
+    {
+        <div class="notice" role="alert">
+            <p>This data could not be loaded from @d.SourceName right now.</p>
+            <button class="border small round" type="button" hx-get="@self" hx-target="#ind-@d.Id" hx-swap="outerHTML">Try again</button>
+        </div>
+    }
+    else
+    {
+        <div class="controls">
+            @if (d.Chart != ChartKind.Breakdown)
+            {
+                <div class="control-group" role="group" aria-label="Time range">
+                    @foreach (var range in IndicatorShaper.RangesFor(d.Frequency))
+                    {
+                        <button type="button" class="chip-button @(range.Years == Model.Years ? "selected" : null)" aria-pressed="@(range.Years == Model.Years ? "true" : "false")"
+                                hx-get="@self?years=@range.Years&view=@Model.View" hx-target="#ind-@d.Id" hx-swap="outerHTML">@range.Label</button>
+                    }
+                </div>
+            }
+            <div class="control-group" role="group" aria-label="View">
+                <button type="button" class="chip-button @(Model.View == "chart" ? "selected" : null)" aria-pressed="@(Model.View == "chart" ? "true" : "false")"
+                        hx-get="@self?years=@Model.Years&view=chart" hx-target="#ind-@d.Id" hx-swap="outerHTML">Chart</button>
+                <button type="button" class="chip-button @(Model.View == "table" ? "selected" : null)" aria-pressed="@(Model.View == "table" ? "true" : "false")"
+                        hx-get="@self?years=@Model.Years&view=table" hx-target="#ind-@d.Id" hx-swap="outerHTML">Table</button>
+            </div>
+        </div>
+
+        @if (Model.View == "table")
+        {
+            <div class="table-scroll table-tall">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">@(d.Chart == ChartKind.Breakdown ? "Category" : "Period")</th>
+                            @foreach (var dataset in Model.Payload!.Datasets)
+                            {
+                                <th scope="col" class="num">@(Model.Payload.Datasets.Count == 1 ? "Value" : dataset.Label)</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in Model.TableRows())
+                        {
+                            <tr>
+                                <th scope="row">@row.Label</th>
+                                @foreach (var cell in row.Cells)
+                                {
+                                    <td class="num">@cell</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="chart-box">
+                <canvas data-chart="@Model.PayloadJson" role="img" aria-label="@d.Title: @d.Unit. Use the Table button for the values."></canvas>
+            </div>
+        }
+    }
+
+    <p class="explain">@d.Description</p>
+    <p class="source">
+        Source: <a href="@d.SourceUrl" rel="noopener">@SourcesModel.SourceLabel(d)</a>
+        @if (Model.Data is { } data)
+        {
+            @if (data.SourceUpdated is { } updated)
+            {
+                <span> · updated @updated.ToString("d MMM yyyy", System.Globalization.CultureInfo.InvariantCulture)</span>
+            }
+            @if (data.IsStale)
+            {
+                <span class="stale"> · Source unavailable; showing data retrieved @data.FetchedAt.ToString("d MMM yyyy", System.Globalization.CultureInfo.InvariantCulture)</span>
+            }
+        }
+    </p>
+</article>

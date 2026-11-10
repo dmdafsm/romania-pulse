@@ -1,0 +1,50 @@
+@page
+@model SourcesModel
+@{
+    ViewData["Title"] = "Data sources";
+    ViewData["Nav"] = "sources";
+}
+<section class="hero">
+    <h1>Data sources</h1>
+    <p class="lead">
+        Every figure on this site is public, official data, shown as published. Nothing is estimated, smoothed or filled in.
+    </p>
+</section>
+
+<article class="indicator prose">
+    <h2>Where the numbers come from</h2>
+    <p>
+        <strong><a href="https://ec.europa.eu/eurostat" rel="noopener">Eurostat</a></strong> is the statistical office of the European Union.
+        Its Romanian figures are produced by the National Institute of Statistics (INS) and the National Bank of Romania (BNR)
+        using methods shared by all EU countries, which makes them comparable across borders.
+    </p>
+    <p>
+        <strong><a href="https://www.bnr.ro/" rel="noopener">BNR</a></strong> publishes the official leu reference exchange rates every banking day.
+    </p>
+    <p>
+        Data is refreshed about every @IndicatorService.FreshFor.TotalHours hours. If a source is unavailable, the last good copy is shown and labelled as such.
+        Recent periods are often provisional and get revised by the statistical offices.
+    </p>
+</article>
+
+<article class="indicator">
+    <h2>Indicators</h2>
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr><th scope="col">Indicator</th><th scope="col">Measure</th><th scope="col">Frequency</th><th scope="col">Source</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var indicator in IndicatorCatalog.All)
+                {
+                    <tr>
+                        <th scope="row"><a href="/section/@indicator.Section#ind-@indicator.Id">@indicator.Title</a></th>
+                        <td>@indicator.Unit</td>
+                        <td>@indicator.Frequency</td>
+                        <td><a href="@indicator.SourceUrl" rel="noopener">@SourcesModel.SourceLabel(indicator)</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</article>

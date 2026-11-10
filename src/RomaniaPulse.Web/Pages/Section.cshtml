@@ -1,0 +1,23 @@
+@page "/section/{slug}"
+@model SectionModel
+@{
+    ViewData["Title"] = Model.Section.Title;
+    ViewData["Nav"] = Model.Section.Slug;
+}
+<section class="hero">
+    <h1>@Model.Section.Title</h1>
+    <p class="lead">@Model.Section.Intro</p>
+</section>
+
+<div class="indicator-grid">
+    @foreach (var indicator in Model.Indicators)
+    {
+        <article id="ind-@indicator.Id" class="indicator"
+                 hx-get="/fragments/chart/@indicator.Id" hx-trigger="load" hx-swap="outerHTML">
+            <h2>@indicator.Title</h2>
+            <p class="unit">@indicator.Unit</p>
+            <div class="chart-box skeleton" aria-hidden="true"></div>
+            <noscript><p><a href="/fragments/chart/@indicator.Id?view=table">Show the data as a table</a></p></noscript>
+        </article>
+    }
+</div>

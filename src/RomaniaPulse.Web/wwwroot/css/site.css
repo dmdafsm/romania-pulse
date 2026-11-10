@@ -1,0 +1,431 @@
+/* Romania Pulse — custom styles on top of Beer CSS (Material Design 3).
+   Layout and surfaces use Beer's tokens; only chart series colours are defined here. */
+
+:root,
+body.light {
+    --series-1: #2a78d6;
+    --series-2: #eb6834;
+    --series-3: #1baf7a;
+    --series-4: #eda100;
+    --chart-grid: #e4e3df;
+    --chart-ink: #52514e;
+}
+
+body.dark {
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --chart-grid: #383835;
+    --chart-ink: #c3c2b7;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main.responsive {
+    flex: 1;
+    padding: 0 16px 48px;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.skip-link {
+    position: absolute;
+    left: -9999px;
+}
+
+.skip-link:focus {
+    left: 16px;
+    top: 8px;
+    z-index: 100;
+    background: var(--primary);
+    color: var(--on-primary);
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+
+/* ---- Header ---- */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: block;
+    min-height: 0;
+    padding: 0;
+    background: var(--surface-container);
+    border-bottom: 1px solid var(--outline-variant);
+}
+
+.site-bar,
+.site-nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
+.site-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--on-surface);
+}
+
+.brand svg {
+    color: var(--primary);
+}
+
+.site-nav {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.site-nav a {
+    flex: none;
+    padding: 10px 12px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--on-surface-variant);
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+}
+
+.site-nav a:hover {
+    color: var(--on-surface);
+}
+
+.site-nav a.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.site-footer {
+    display: block;
+    min-height: 0;
+    padding: 24px 16px;
+    background: var(--surface-container);
+    color: var(--on-surface-variant);
+    font-size: 0.8125rem;
+    text-align: center;
+}
+
+.site-footer p {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.site-footer a,
+.source a,
+.prose a,
+.data-table a {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+/* ---- Typography ---- */
+.hero {
+    padding: 32px 0 8px;
+}
+
+.hero h1 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    line-height: 1.15;
+    font-weight: 600;
+    margin: 0 0 8px;
+    text-wrap: balance;
+}
+
+.lead {
+    font-size: 1.0625rem;
+    color: var(--on-surface-variant);
+    max-width: 62ch;
+    margin: 0;
+}
+
+.section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 32px 0 12px;
+}
+
+/* ---- Headline tiles ---- */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+}
+
+.kpi {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 16px;
+    border-radius: 16px;
+    background: var(--surface-container-low);
+    border: 1px solid var(--outline-variant);
+    color: var(--on-surface);
+    min-height: 172px;
+}
+
+.kpi:hover,
+.topic:hover {
+    border-color: var(--primary);
+}
+
+.kpi-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--on-surface-variant);
+}
+
+.kpi-value {
+    font-size: 2rem;
+    line-height: 1.2;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.kpi-meta,
+.kpi-unit {
+    font-size: 0.8125rem;
+    color: var(--on-surface-variant);
+}
+
+.kpi-unit {
+    margin-top: auto;
+}
+
+.sparkline {
+    width: 100%;
+    height: 36px;
+    margin: 8px 0;
+}
+
+.sparkline path {
+    fill: none;
+    stroke: var(--series-1);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+}
+
+/* ---- Topic cards ---- */
+.topic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+}
+
+.topic {
+    display: block;
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid var(--outline-variant);
+    color: var(--on-surface);
+}
+
+.topic h3 {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    margin: 0 0 4px;
+}
+
+.topic p {
+    font-size: 0.875rem;
+    color: var(--on-surface-variant);
+    margin: 0 0 12px;
+}
+
+.topic-count {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--primary);
+}
+
+/* ---- Indicator cards ---- */
+.indicator-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
+    gap: 16px;
+    margin-top: 24px;
+}
+
+article.indicator {
+    margin: 0;
+    padding: 20px;
+    border-radius: 16px;
+    background: var(--surface-container-low);
+    border: 1px solid var(--outline-variant);
+    box-shadow: none;
+    scroll-margin-top: 120px;
+    min-width: 0;
+}
+
+.prose,
+main > article.indicator {
+    margin-top: 24px;
+}
+
+.indicator h2 {
+    font-size: 1.125rem;
+    line-height: 1.3;
+    font-weight: 600;
+    margin: 0;
+}
+
+.unit {
+    font-size: 0.8125rem;
+    color: var(--on-surface-variant);
+    margin: 2px 0 12px;
+}
+
+.prose p {
+    max-width: 70ch;
+    margin: 12px 0 0;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.control-group {
+    display: inline-flex;
+    gap: 4px;
+}
+
+button.chip-button {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1;
+    padding: 7px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--outline-variant);
+    color: var(--on-surface-variant);
+}
+
+button.chip-button:hover {
+    background: var(--surface-container-high);
+}
+
+button.chip-button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+button.chip-button.selected {
+    background: var(--secondary-container);
+    color: var(--on-secondary-container);
+    border-color: transparent;
+}
+
+.chart-box {
+    position: relative;
+    height: 300px;
+}
+
+.explain {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin: 16px 0 0;
+    max-width: 70ch;
+}
+
+.source {
+    font-size: 0.75rem;
+    color: var(--on-surface-variant);
+    margin: 8px 0 0;
+}
+
+.stale {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--error);
+}
+
+.notice {
+    padding: 24px 0;
+}
+
+/* ---- Tables ---- */
+.table-scroll {
+    overflow: auto;
+}
+
+.table-tall {
+    height: 300px;
+}
+
+table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.data-table th,
+.data-table td {
+    padding: 8px 12px 8px 0;
+    text-align: left;
+    font-weight: 400;
+    border-bottom: 1px solid var(--outline-variant);
+    vertical-align: top;
+}
+
+.data-table thead th {
+    position: sticky;
+    top: 0;
+    background: var(--surface-container-low);
+    font-weight: 600;
+    color: var(--on-surface-variant);
+}
+
+.data-table .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+/* ---- Loading ---- */
+.skeleton {
+    border-radius: 8px;
+    background: var(--surface-container-high);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .skeleton {
+        animation: pulse 1.4s ease-in-out infinite;
+    }
+}
+
+@keyframes pulse {
+    50% {
+        opacity: 0.45;
+    }
+}
+
+.htmx-request button.chip-button {
+    cursor: progress;
+}

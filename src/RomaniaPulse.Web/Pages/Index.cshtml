@@ -1,0 +1,37 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Overview";
+    ViewData["Nav"] = "overview";
+}
+<section class="hero">
+    <h1>The pulse of the Romanian economy</h1>
+    <p class="lead">
+        The numbers that tell you how the economy is doing, straight from official statistics and explained in plain language.
+    </p>
+</section>
+
+<h2 class="section-title">At a glance</h2>
+<div class="kpi-grid">
+    @foreach (var indicator in IndicatorCatalog.Headlines)
+    {
+        <a class="kpi" href="/section/@indicator.Section#ind-@indicator.Id"
+           hx-get="/fragments/kpi/@indicator.Id" hx-trigger="load" hx-swap="outerHTML">
+            <span class="kpi-title">@indicator.Title</span>
+            <span class="kpi-value skeleton" aria-hidden="true">&nbsp;</span>
+            <span class="kpi-meta">Loading…</span>
+        </a>
+    }
+</div>
+
+<h2 class="section-title">Explore</h2>
+<div class="topic-grid">
+    @foreach (var topic in IndicatorCatalog.Sections)
+    {
+        <a class="topic" href="/section/@topic.Slug">
+            <h3>@topic.Title</h3>
+            <p>@topic.Intro</p>
+            <span class="topic-count">@IndicatorCatalog.InSection(topic.Slug).Count() indicators</span>
+        </a>
+    }
+</div>
