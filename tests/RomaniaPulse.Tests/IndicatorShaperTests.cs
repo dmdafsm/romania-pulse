@@ -103,6 +103,17 @@ public class IndicatorShaperTests
     }
 
     [Fact]
+    public void Breakdown_HighlightKey_NamesTheHighlightedCategory()
+    {
+        var definition = Definition(ChartKind.Breakdown) with { HighlightKey = "b" };
+        var data = Data(Quarterly("a", 2026, 1), new Series("b", "Romania", [new Observation(new DateOnly(2026, 1, 1), 2)]));
+
+        var (payload, _) = IndicatorShaper.Breakdown(definition, data);
+
+        Assert.Equal("Romania", payload.Highlight);
+    }
+
+    [Fact]
     public void Breakdown_DropsCategoriesWithIncompleteWindow()
     {
         var definition = Definition(ChartKind.Breakdown) with { Breakdown = new BreakdownOptions(WindowPeriods: 2) };

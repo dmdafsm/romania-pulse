@@ -24,7 +24,7 @@ Then open http://localhost:8080. The image is built and published by [.github/wo
 ## How it works
 
 ```
-Catalog/IndicatorCatalog.cs   what the portal shows (23 indicators in 6 sections)
+Catalog/IndicatorCatalog.cs   what the portal shows (31 indicators in 6 sections)
         │
 Services/IndicatorService     memory cache → disk snapshot → upstream, with stale fallback
         │

@@ -14,11 +14,15 @@ Survey of public data for Romanian macro indicators (checked November 2026).
 | Indicator | Dataset | Frequency |
 |---|---|---|
 | Real GDP growth, nominal GDP | `namq_10_gdp` | Quarterly |
-| GDP per capita vs EU (PPS, EU=100) | `tec00114` | Annual |
+| Nominal GDP by year | `nama_10_gdp` | Annual |
+| GDP per capita vs EU (PPS, EU=100), Romania over time and all EU countries | `tec00114` | Annual |
 | Gross value added by sector | `namq_10_a10` | Quarterly |
 | Employment by sector | `namq_10_a10_e` | Quarterly |
-| Unemployment rate | `une_rt_m` | Monthly |
-| Employment rate (20–64) | `lfsi_emp_q` | Quarterly |
+| Unemployment rate and number unemployed | `une_rt_m` | Monthly |
+| Employment rate and number employed (20–64) | `lfsi_emp_q` | Quarterly |
+| Average full-time salary | `nama_10_fte` | Annual |
+| Statutory minimum wage | `earn_mw_cur` | Twice a year |
+| Wage distribution (first decile, median, mean, ninth decile) | `earn_ses_monthly` | Every four years |
 | Wage growth (labour cost index, wages) | `lc_lci_r2_q` | Quarterly |
 | Inflation (HICP), total and by category | `prc_hicp_minr` (replaced `prc_hicp_manr` in 2026) | Monthly |
 | House prices | `prc_hpi_q` | Quarterly |
@@ -26,7 +30,7 @@ Survey of public data for Romanian macro indicators (checked November 2026).
 | Exports and imports of goods | `ei_eteu27_2020_m` | Monthly |
 | Exports / imports by product group (SITC) | `ext_lt_intertrd` | Annual |
 | Current account balance (% of GDP) | `bop_gdp6_q` | Quarterly |
-| Government debt (% of GDP) | `gov_10q_ggdebt` | Quarterly |
+| Government debt (% of GDP and € billion) | `gov_10q_ggdebt` | Quarterly |
 | Government balance (% of GDP) | `gov_10dd_edpt1` | Annual |
 | Industrial production, retail trade, construction | `sts_inpr_m`, `sts_trtu_m`, `sts_copr_m` | Monthly |
 | Economic sentiment | `ei_bssi_m_r2` | Monthly |

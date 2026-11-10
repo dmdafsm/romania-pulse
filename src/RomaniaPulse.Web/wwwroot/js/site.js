@@ -88,7 +88,7 @@
         const font = { family: token('--font') || 'sans-serif', size: 12 };
 
         if (horizontal) {
-            canvas.parentElement.style.height = `${payload.labels.length * 38 + 40}px`;
+            canvas.parentElement.style.height = `${payload.labels.length * (payload.labels.length > 14 ? 26 : 38) + 40}px`;
         }
 
         // Axis ticks stay terse: the unit is in the card's subtitle, only "%" is repeated.
@@ -96,11 +96,15 @@
             v.toLocaleString('en-GB', { maximumFractionDigits: 2 }).replace('-', '\u2212') + (payload.suffix === '%' ? '%' : '');
         const labels = horizontal ? payload.labels.map((label) => wrap(label, 20)) : payload.labels;
 
+        // In a comparison, only the highlighted entity carries the accent; the rest recede.
+        const highlightAt = payload.highlight ? payload.labels.indexOf(payload.highlight) : -1;
+        const barColors = payload.labels.map((_, i) => (i === highlightAt ? colors[0] : token('--chart-muted')));
+
         const datasets = payload.datasets.map((dataset, i) => ({
             label: dataset.label,
             data: dataset.data,
             borderColor: colors[i % colors.length],
-            backgroundColor: colors[i % colors.length],
+            backgroundColor: highlightAt >= 0 ? barColors : colors[i % colors.length],
             borderWidth: isLine ? 2 : 0,
             pointRadius: 0,
             pointHoverRadius: 5,
@@ -120,7 +124,13 @@
         const categoryAxis = {
             border: { color: grid },
             grid: { display: false },
-            ticks: { color: horizontal ? token('--on-surface') : ink, font, maxRotation: 0, autoSkip: !horizontal, maxTicksLimit: horizontal ? undefined : 7 },
+            ticks: {
+                color: horizontal ? token('--on-surface') : ink,
+                font: (context) => ({ ...font, weight: context.index === highlightAt ? 700 : 400 }),
+                maxRotation: 0,
+                autoSkip: !horizontal,
+                maxTicksLimit: horizontal ? undefined : 7,
+            },
         };
 
         // Leave room on the value side for the direct labels of horizontal bars.

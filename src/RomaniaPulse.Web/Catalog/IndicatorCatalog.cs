@@ -1,4 +1,5 @@
 using RomaniaPulse.Web.Domain;
+using RomaniaPulse.Web.Sources;
 
 namespace RomaniaPulse.Web.Catalog;
 
@@ -58,6 +59,24 @@ public static class IndicatorCatalog
         new("CP13", "Personal care & other"),
     ];
 
+    private static readonly SeriesSpec[] EuCountries =
+    [
+        new("AT", "Austria"), new("BE", "Belgium"), new("BG", "Bulgaria"), new("HR", "Croatia"), new("CY", "Cyprus"),
+        new("CZ", "Czechia"), new("DK", "Denmark"), new("EE", "Estonia"), new("FI", "Finland"), new("FR", "France"),
+        new("DE", "Germany"), new("EL", "Greece"), new("HU", "Hungary"), new("IE", "Ireland"), new("IT", "Italy"),
+        new("LV", "Latvia"), new("LT", "Lithuania"), new("LU", "Luxembourg"), new("MT", "Malta"), new("NL", "Netherlands"),
+        new("PL", "Poland"), new("PT", "Portugal"), new("RO", "Romania"), new("SK", "Slovakia"), new("SI", "Slovenia"),
+        new("ES", "Spain"), new("SE", "Sweden"),
+    ];
+
+    private static readonly SeriesSpec[] WageDistribution =
+    [
+        new("D1_E_EUR", "Lowest-paid 10% earn less than"),
+        new("MED_E_EUR", "Median (half earn less)"),
+        new("MEAN_E_EUR", "Average"),
+        new("D9_E_EUR", "Highest-paid 10% earn more than"),
+    ];
+
     public static IReadOnlyList<IndicatorDefinition> All { get; } =
     [
         // ---- Growth -------------------------------------------------------
@@ -67,7 +86,13 @@ public static class IndicatorCatalog
             "namq_10_gdp", F(("unit", "CLV_PCH_SM"), ("s_adj", "SCA"), ("na_item", "B1GQ"))) with
         { Suffix = "%", IsHeadline = true },
 
-        Eurostat("gdp-nominal", "growth", "Size of the economy", ChartKind.Bar, Frequency.Quarterly,
+        Eurostat("gdp-annual", "growth", "Size of the economy, by year", ChartKind.Bar, Frequency.Annual,
+            "GDP at current prices, € billion per year",
+            "The total value of everything produced in a year, in euros at the prices of the time. Part of the rise is real growth and part is simply higher prices.",
+            "nama_10_gdp", F(("unit", "CP_MEUR"), ("na_item", "B1GQ"))) with
+        { Suffix = " € bn", Scale = 0.001, Delta = DeltaKind.Percent },
+
+        Eurostat("gdp-nominal", "growth", "Size of the economy, by quarter", ChartKind.Bar, Frequency.Quarterly,
             "GDP at current prices, € billion per quarter",
             "The total value produced in each quarter, in euros at the prices of the time. It is not adjusted for inflation or seasons, so compare a quarter with the same quarter a year before.",
             "namq_10_gdp", F(("unit", "CP_MEUR"), ("s_adj", "NSA"), ("na_item", "B1GQ"))) with
@@ -78,6 +103,13 @@ public static class IndicatorCatalog
             "Output per person, adjusted for the fact that prices are lower in Romania. 100 would mean the same material living standard as the EU average; the gap to 100 is how far there is left to catch up.",
             "tec00114", F()) with
         { Decimals = 0 },
+
+        Eurostat("gdp-per-capita-ranking", "growth", "Where Romania stands in the EU", ChartKind.Breakdown, Frequency.Annual,
+            "GDP per person in purchasing power standards, EU average = 100",
+            "The same living-standards measure for every EU country in the latest year, so you can see who Romania has caught up with and who is still ahead. Luxembourg and Ireland are inflated by multinationals and cross-border workers.",
+            "tec00114", F(("sinceTimePeriod", "2020")),
+            EurostatSource.GeoDimension, EuCountries) with
+        { Decimals = 0, HighlightKey = "RO" },
 
         Eurostat("gva-by-sector", "growth", "What the economy is made of", ChartKind.Breakdown, Frequency.Quarterly,
             "Share of gross value added by sector, last four quarters, %",
@@ -98,6 +130,37 @@ public static class IndicatorCatalog
             "How many working-age people actually have a job. Romania's rate is among the lowest in the EU, largely because fewer women and rural residents are in formal work.",
             "lfsi_emp_q", F(("s_adj", "SA"), ("age", "Y20-64"), ("sex", "T"), ("unit", "PC_POP"), ("indic_em", "EMP_LFS"))) with
         { Suffix = "%" },
+
+        Eurostat("employed-people", "jobs", "People in work", ChartKind.Line, Frequency.Quarterly,
+            "Employed people aged 20–64, millions, seasonally adjusted",
+            "The actual number of people with a job, behind the employment rate. It can fall even when the rate holds steady, because the working-age population is shrinking through ageing and emigration.",
+            "lfsi_emp_q", F(("s_adj", "SA"), ("age", "Y20-64"), ("sex", "T"), ("unit", "THS_PER"), ("indic_em", "EMP_LFS"))) with
+        { Suffix = " m", Scale = 0.001, Decimals = 2, Delta = DeltaKind.Percent },
+
+        Eurostat("unemployed-people", "jobs", "People out of work", ChartKind.Line, Frequency.Monthly,
+            "Unemployed people, thousands, seasonally adjusted",
+            "The actual number of people looking for a job and not finding one, behind the unemployment rate.",
+            "une_rt_m", F(("s_adj", "SA"), ("age", "TOTAL"), ("sex", "T"), ("unit", "THS_PER"))) with
+        { Suffix = " k", Decimals = 0, Delta = DeltaKind.Percent },
+
+        Eurostat("average-wage", "jobs", "Average salary", ChartKind.Bar, Frequency.Annual,
+            "Average gross salary of a full-time employee, lei per month (annual figure ÷ 12)",
+            "What a full-time employee earns on average before tax and contributions. The average is pulled up by high earners, so most people earn less than this; see the distribution chart for the median.",
+            "nama_10_fte", F(("unit", "NAC"))) with
+        { Suffix = " lei", Scale = 1.0 / 12, Decimals = 0, Delta = DeltaKind.Percent },
+
+        Eurostat("minimum-wage", "jobs", "Minimum wage", ChartKind.Line, Frequency.Semiannual,
+            "Statutory gross minimum wage, lei per month",
+            "The lowest gross monthly pay an employer may legally offer for a full-time job. It is set by the government and a large share of Romanian employees are paid at or near it.",
+            "earn_mw_cur", F(("currency", "NAC"))) with
+        { Suffix = " lei", Decimals = 0, Delta = DeltaKind.Percent },
+
+        Eurostat("wage-distribution", "jobs", "How wages are spread", ChartKind.Breakdown, Frequency.Annual,
+            "Gross monthly earnings in euros, latest four-yearly earnings survey",
+            "Averages hide the spread. This shows the pay level below which the lowest-paid tenth of employees fall, the median that splits employees in half, the average, and the level above which the top tenth earn. The survey covers firms with 10 or more employees and runs only every four years.",
+            "earn_ses_monthly", F(("nace_r2", "B-S_X_O"), ("isco08", "TOTAL"), ("worktime", "TOTAL"), ("age", "TOTAL"), ("sex", "T")),
+            "indic_se", WageDistribution) with
+        { Suffix = " €", Decimals = 0 },
 
         Eurostat("wage-growth", "jobs", "Wage growth", ChartKind.Bar, Frequency.Quarterly,
             "Hourly wage costs, % change on the same quarter a year earlier",
@@ -190,6 +253,12 @@ public static class IndicatorCatalog
             "Everything the state owes, compared with the size of the economy. EU rules set a reference limit of 60%; beyond it, a country is expected to bring debt down.",
             "gov_10q_ggdebt", F(("unit", "PC_GDP"), ("sector", "S13"), ("na_item", "GD"))) with
         { Suffix = "%", IsHeadline = true },
+
+        Eurostat("gov-debt-level", "public-finances", "Government debt in euros", ChartKind.Line, Frequency.Quarterly,
+            "General government gross debt, € billion",
+            "The actual amount the state owes. It almost always grows; what matters for sustainability is whether it grows faster than the economy, which is what the % of GDP chart shows.",
+            "gov_10q_ggdebt", F(("unit", "MIO_EUR"), ("sector", "S13"), ("na_item", "GD"))) with
+        { Suffix = " € bn", Scale = 0.001, Delta = DeltaKind.Percent, CompareLag = 4 },
 
         Eurostat("gov-balance", "public-finances", "Budget balance", ChartKind.Bar, Frequency.Annual,
             "General government surplus (+) or deficit (−), % of GDP",

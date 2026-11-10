@@ -14,7 +14,8 @@ public sealed record ChartPayload(
     IReadOnlyList<string> Labels,
     IReadOnlyList<ChartDataset> Datasets,
     string Suffix,
-    int Decimals);
+    int Decimals,
+    string? Highlight = null);
 
 public sealed record RangeOption(string Label, int Years);
 
@@ -34,14 +35,14 @@ public static class IndicatorShaper
     public static IReadOnlyList<RangeOption> RangesFor(Frequency frequency) => frequency switch
     {
         Frequency.Daily => [new("1 year", 1), new("3 years", 3), new("All", AllYears)],
-        Frequency.Annual => [new("10 years", 10), new("20 years", 20), new("All", AllYears)],
+        Frequency.Annual or Frequency.Semiannual => [new("10 years", 10), new("20 years", 20), new("All", AllYears)],
         _ => [new("5 years", 5), new("10 years", 10), new("All", AllYears)],
     };
 
     public static int DefaultRange(Frequency frequency) => frequency switch
     {
         Frequency.Daily => 1,
-        Frequency.Annual => 20,
+        Frequency.Annual or Frequency.Semiannual => 20,
         _ => 10,
     };
 
@@ -122,7 +123,8 @@ public static class IndicatorShaper
             [.. ordered.Select(i => i.Label)],
             [new ChartDataset(definition.Title, [.. ordered.Select(i => (double?)Math.Round(i.Value, definition.Decimals))])],
             definition.Suffix,
-            definition.Decimals);
+            definition.Decimals,
+            definition.HighlightKey is { } key && totals.TryGetValue(key, out var highlighted) ? highlighted.Label : null);
 
         var first = Period.Label(window[0], definition.Frequency);
         var final = Period.Label(window[^1], definition.Frequency);

@@ -47,6 +47,11 @@ public class IndicatorCatalogTests
             Assert.False(d.IsHeadline, "A breakdown has no single headline value.");
             Assert.NotNull(eurostat?.SeriesDimension);
             Assert.NotEmpty(eurostat.Series!);
+            if (d.HighlightKey is { } highlightKey)
+            {
+                Assert.Contains(eurostat.Series!, s => s.Code == highlightKey);
+            }
+
             if (d.Breakdown?.ShareOfKey is { } shareKey)
             {
                 Assert.Contains(eurostat.Series!, s => s.Code == shareKey);
