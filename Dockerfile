@@ -13,7 +13,7 @@ RUN dotnet restore src/RomaniaPulse.Web --locked-mode
 COPY src/RomaniaPulse.Web/ src/RomaniaPulse.Web/
 RUN dotnet publish src/RomaniaPulse.Web -c Release --no-restore -p:UseAppHost=false -o /app
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0
+FROM mcr.microsoft.com/dotnet/aspnet:11.0
 WORKDIR /app
 COPY --from=build /app .
 
