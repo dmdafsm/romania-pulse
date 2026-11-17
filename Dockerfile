@@ -2,7 +2,7 @@
 
 # Build on the runner's native architecture. The output is portable IL, so it runs on any
 # architecture the runtime image supports without emulating the build.
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:11.0 AS build
 WORKDIR /src
 
 # Restore first so this layer is cached until dependencies change.
